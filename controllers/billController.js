@@ -91,7 +91,7 @@ const getBillById = async (req, res) => {
 
 const getBillsExcel = async (req, res) => {
   try {
-    const bills = await Bill.find().sort({ date: -1 });
+    const bills = await Bill.find();
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Bills");
 
