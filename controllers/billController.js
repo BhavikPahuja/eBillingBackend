@@ -7,7 +7,6 @@ const ExcelJS = require("exceljs");
 const createBill = async (req, res) => {
     console.log("Received request:", req.body);
   try {
-    // Get latest serial to increment
     const lastBill = await Bill.findOne().sort({ serial: -1 });
     const newSerial = lastBill ? lastBill.serial + 1 : 1;
 
@@ -15,6 +14,8 @@ const createBill = async (req, res) => {
       serial: newSerial,
       billerName: req.body.billerName,
       billerNumber: req.body.billerNumber,
+      billToAddress: req.body.billToAddress,
+      billToCity: req.body.billToCity,
       products: req.body.products,
       totalAmount: req.body.products.reduce(
         (sum, p) => sum + p.quantity * p.price,
@@ -61,7 +62,6 @@ const getBillPdf = async (req, res) => {
     if (!bill) {
       return res.status(404).json({ error: "Bill not found" });
     }
-    // Generate PDF buffer from bill data
     const pdfBuffer = await generatePdf(bill.toObject());
 
     res.setHeader("Content-Type", "application/pdf");
