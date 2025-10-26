@@ -12,6 +12,7 @@ const createBill = async (req, res) => {
 
     const billData = {
       serial: newSerial,
+      shopName: req.body.shopName,
       billerName: req.body.billerName,
       billerNumber: req.body.billerNumber,
       billToAddress: req.body.billToAddress,
@@ -21,7 +22,7 @@ const createBill = async (req, res) => {
         (sum, p) => sum + p.quantity * p.price,
         0
       ),
-      date: new Date(),
+      date: req.body.date ? new Date(req.body.date) : new Date(),
     };
 
     const newBill = new Bill(billData);

@@ -8,6 +8,7 @@ const ProductSchema = new mongoose.Schema({
 
 const BillSchema = new mongoose.Schema({
   serial: { type: Number, unique: true },
+  shopName: String,
   billerName: String,
   billerNumber: String,
   billToAddress: String,
