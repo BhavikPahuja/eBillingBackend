@@ -5,7 +5,7 @@ const fs = require("fs");
 const ExcelJS = require("exceljs");
 
 const createBill = async (req, res) => {
-    console.log("Received request:", req.body);
+  console.log("Received request:", req.body);
   try {
     const lastBill = await Bill.findOne().sort({ serial: -1 });
     const newSerial = lastBill ? lastBill.serial + 1 : 1;
@@ -27,7 +27,9 @@ const createBill = async (req, res) => {
 
     const newBill = new Bill(billData);
     await newBill.save();
-    res.status(201).json({ message: "Bill created", invoiceNo: newBill.serial });
+    res
+      .status(201)
+      .json({ message: "Bill created", invoiceNo: newBill.serial });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -43,9 +45,9 @@ const getBills = async (req, res) => {
       filter.date = {};
       if (from) filter.date.$gte = new Date(from);
       if (to) {
-            const toDate = new Date(to);
-    toDate.setDate(toDate.getDate() + 1);
-    filter.date.$lt = toDate;
+        const toDate = new Date(to);
+        toDate.setDate(toDate.getDate() + 1);
+        filter.date.$lt = toDate;
       }
     }
 
@@ -100,10 +102,15 @@ const getBillsExcel = async (req, res) => {
       { header: "Serial", key: "serial", width: 10 },
       { header: "Biller", key: "billerName", width: 20 },
       { header: "Date", key: "date", width: 15 },
-      { header: "Total", key: "totalAmount", width: 15, style: { numFmt: '"₹"#,##0.00' } },
+      {
+        header: "Total",
+        key: "totalAmount",
+        width: 15,
+        style: { numFmt: '"₹"#,##0.00' },
+      },
     ];
 
-    bills.forEach(bill => {
+    bills.forEach((bill) => {
       worksheet.addRow({
         serial: bill.serial,
         billerName: bill.billerName,
@@ -112,9 +119,12 @@ const getBillsExcel = async (req, res) => {
       });
     });
 
-    worksheet.getColumn('totalAmount').numFmt = '"₹"#,##0.00';
+    worksheet.getColumn("totalAmount").numFmt = '"₹"#,##0.00';
 
-    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
     res.setHeader("Content-Disposition", "attachment; filename=bills.xlsx");
     await workbook.xlsx.write(res);
     res.end();
@@ -123,4 +133,10 @@ const getBillsExcel = async (req, res) => {
   }
 };
 
-module.exports = { createBill, getBills, getBillPdf, getBillsExcel, getBillById };
+module.exports = {
+  createBill,
+  getBills,
+  getBillPdf,
+  getBillsExcel,
+  getBillById,
+};
